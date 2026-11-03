@@ -10,6 +10,56 @@ class Program
 
         Console.WriteLine($"Produktas: {produktas.Name}, kaina: {produktas.Price}");
 
+
+        while(true)
+        {       
+            Console.WriteLine("Ar norėtumėte sustabdyti licenziją?\n true arba false:");
+            string? inputSuspend = Console.ReadLine();
+ 
+            if(inputSuspend is null)
+            {
+                return;
+            }
+            if(!(bool.TryParse(inputSuspend, out bool wantsSuspend)))
+            {
+                Console.WriteLine("Netinkama įvestis. Rašykite true arba false");
+                continue;
+            }
+            if (wantsSuspend)
+            {
+                licenzija.Suspend();
+                Console.WriteLine("Licencija sustabdyta.");
+            }
+
+            break;
+        }
+
+        if (!licenzija.IsActive)
+        {
+            while(true) 
+            {     
+                Console.WriteLine("Ar norėtumėte aktyvuoti licenziją? Rašykite true arba false");
+                string? inputActivate = Console.ReadLine();   
+                if(inputActivate is null)
+                {
+                    return;
+                }
+                if(!(bool.TryParse(inputActivate, out bool wantsActivate)))
+                {
+                    Console.WriteLine("Netinkama įvestis. Rašykite true arba false");
+                    continue;
+                }
+                if (wantsActivate)
+                {
+                    licenzija.Activate();
+                    Console.WriteLine("Licencija aktyvuota.");
+                }
+
+                break;
+            }
+        }
+
+
         while (true)
         {
             Console.WriteLine($"\nAr norėtumėte atsisiųsti {produktas.Name}?");
