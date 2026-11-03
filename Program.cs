@@ -5,17 +5,17 @@ class Program
     static void Main()
     {
         Product produktas = new Product(1, "Shake Presets", 47m);
-        License licenzija = new License(produktas.Id, 15, 3, true);
+        License licencija = new License(produktas.Id, 15, 3, true);
 
         Console.WriteLine($"Produktas: {produktas.Name}, kaina: {produktas.Price}");
 
         // Vienas ciklas leidžia pasirinkti veiksmus bet kuria tvarka.
         while (true)
         {
-            int remainingDownloads = Math.Max(0, licenzija.DownloadLimit - licenzija.DownloadCount);
+            int remainingDownloads = Math.Max(0, licencija.DownloadLimit - licencija.DownloadCount);
 
-            Console.WriteLine($"\nLicencija aktyvi: {licenzija.IsActive}");
-            Console.WriteLine($"Panaudota atsisiuntimų: {licenzija.DownloadCount} iš {licenzija.DownloadLimit}. " + $"Liko: {remainingDownloads}.");
+            Console.WriteLine($"\nLicencija aktyvi: {licencija.IsActive}");
+            Console.WriteLine($"Panaudota atsisiuntimų: {licencija.DownloadCount} iš {licencija.DownloadLimit}. " + $"Liko: {remainingDownloads}.");
 
             Console.WriteLine("1 - Bandyti atsisiųsti");
             Console.WriteLine("2 - Sustabdyti licenciją");
@@ -31,7 +31,7 @@ class Program
                 return;
             }
 
-            input = input.Trim();
+            input = input.Trim(); // pašalina tarpus įvesties pradžioje ir pabaigoje, todėl, pavyzdžiui, " 1 " tampa "1"
 
             if (input == "0")
             {
@@ -40,13 +40,13 @@ class Program
             else if (input == "1") // jeigu naudotojas nori atsisiųsti failą
             {
                 // Šis metodas kviečiamas vieną kartą vienam bandymui.
-                bool downloadAllowed = licenzija.TryUseDownload();
+                bool downloadAllowed = licencija.TryUseDownload();
 
                 if (downloadAllowed)
                 {
                     Console.WriteLine("Atsisiuntimo bandymas leistas.");
                 }
-                else if (!licenzija.IsActive)
+                else if (!licencija.IsActive)
                 {
                     Console.WriteLine("Atsisiuntimas neleidžiamas: licencija sustabdyta.");
                 }
@@ -55,11 +55,11 @@ class Program
                     Console.WriteLine("Atsisiuntimas neleidžiamas: pasiektas limitas.");
                 }
             }
-            else if (input == "2") // jeigu nori sustabdyti licenziją
+            else if (input == "2") // jeigu nori sustabdyti licenciją
             {
-                if (licenzija.IsActive)
+                if (licencija.IsActive)
                 {
-                    licenzija.Suspend();
+                    licencija.Suspend();
                     Console.WriteLine("Licencija sustabdyta.");
                 }
                 else
@@ -67,11 +67,11 @@ class Program
                     Console.WriteLine("Licencija jau sustabdyta.");
                 }
             }
-            else if (input == "3") // jeigu nori aktyvuoti licenziją
+            else if (input == "3") // jeigu nori aktyvuoti licenciją
             {
-                if (!licenzija.IsActive)
+                if (!licencija.IsActive)
                 {
-                    licenzija.Activate();
+                    licencija.Activate();
                     Console.WriteLine("Licencija aktyvuota. Atsisiuntimų skaitiklis nepakeistas.");
                 }
                 else
@@ -81,8 +81,8 @@ class Program
             }
             else if (input == "4") // jeigu nori atstatyti atsisiuntimų skaičių
             {
-                licenzija.ResetDownloads();
-                Console.WriteLine("Skaitiklis atstatytas. Licencijos aktyvumas nepakeistas.");
+                licencija.ResetDownloads();
+                Console.WriteLine("Atsisiuntimų skaitiklis atstatytas. Licencijos aktyvumas nepakeistas.");
             }
             else
             {
