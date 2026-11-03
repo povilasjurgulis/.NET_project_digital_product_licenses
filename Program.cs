@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.Contracts;
+using System;
 
 class Program
 {
@@ -10,112 +9,84 @@ class Program
 
         Console.WriteLine($"Produktas: {produktas.Name}, kaina: {produktas.Price}");
 
-
-        while(true)
-        {       
-            Console.WriteLine("Ar norėtumėte sustabdyti licenziją?\n true arba false:");
-            string? inputSuspend = Console.ReadLine();
- 
-            if(inputSuspend is null)
-            {
-                return;
-            }
-            if(!(bool.TryParse(inputSuspend, out bool wantsSuspend)))
-            {
-                Console.WriteLine("Netinkama įvestis. Rašykite true arba false");
-                continue;
-            }
-            if (wantsSuspend)
-            {
-                licenzija.Suspend();
-                Console.WriteLine("Licencija sustabdyta.");
-            }
-
-            break;
-        }
-
-        if (!licenzija.IsActive)
-        {
-            while(true) 
-            {     
-                Console.WriteLine("Ar norėtumėte aktyvuoti licenziją? Rašykite true arba false");
-                string? inputActivate = Console.ReadLine();   
-                if(inputActivate is null)
-                {
-                    return;
-                }
-                if(!(bool.TryParse(inputActivate, out bool wantsActivate)))
-                {
-                    Console.WriteLine("Netinkama įvestis. Rašykite true arba false");
-                    continue;
-                }
-                if (wantsActivate)
-                {
-                    licenzija.Activate();
-                    Console.WriteLine("Licencija aktyvuota.");
-                }
-
-                break;
-            }
-        }
-
-
+        // Vienas ciklas leidžia pasirinkti veiksmus bet kuria tvarka.
         while (true)
         {
-            Console.WriteLine($"\nAr norėtumėte atsisiųsti {produktas.Name}?");
-            Console.WriteLine("Įveskite true, o norėdami baigti – false.");
-            string? input = Console.ReadLine(); // gali būti ir null
+            int remainingDownloads = Math.Max(0, licenzija.DownloadLimit - licenzija.DownloadCount);
+
+            Console.WriteLine($"\nLicencija aktyvi: {licenzija.IsActive}");
+            Console.WriteLine($"Panaudota atsisiuntimų: {licenzija.DownloadCount} iš {licenzija.DownloadLimit}. " + $"Liko: {remainingDownloads}.");
+
+            Console.WriteLine("1 - Bandyti atsisiųsti");
+            Console.WriteLine("2 - Sustabdyti licenciją");
+            Console.WriteLine("3 - Aktyvuoti licenciją");
+            Console.WriteLine("4 - Atstatyti atsisiuntimų skaičių");
+            Console.WriteLine("0 - Baigti");
+            Console.Write("Pasirinkite veiksmą: ");
+
+            string? input = Console.ReadLine(); // ? rodo, kad gali būti ir null reikšmė
 
             if (input is null)
             {
-                break;
-            }
-            if (!bool.TryParse(input, out bool wantsDownload)) // tikriname, ar tekstą pavyko konvertuoti į bool (true arba false)
-            {
-                Console.WriteLine("Netinkama įvestis. Rašykite true arba false.");
-                continue;
-            }
-            if (!wantsDownload) // jeigu įveda false
-            {
-                break;
+                return;
             }
 
-            bool downloadAllowed = licenzija.TryUseDownload();
-            int remainingDownloads = licenzija.DownloadLimit - licenzija.DownloadCount;
-            remainingDownloads = Math.Max(0, remainingDownloads);
+            input = input.Trim();
 
-            if (downloadAllowed)
+            if (input == "0")
             {
-                Console.WriteLine("Atsisiuntimo bandymas leistas.");
+                return;
+            }
+            else if (input == "1") // jeigu naudotojas nori atsisiųsti failą
+            {
+                // Šis metodas kviečiamas vieną kartą vienam bandymui.
+                bool downloadAllowed = licenzija.TryUseDownload();
+
+                if (downloadAllowed)
+                {
+                    Console.WriteLine("Atsisiuntimo bandymas leistas.");
+                }
+                else if (!licenzija.IsActive)
+                {
+                    Console.WriteLine("Atsisiuntimas neleidžiamas: licencija sustabdyta.");
+                }
+                else
+                {
+                    Console.WriteLine("Atsisiuntimas neleidžiamas: pasiektas limitas.");
+                }
+            }
+            else if (input == "2") // jeigu nori sustabdyti licenziją
+            {
+                if (licenzija.IsActive)
+                {
+                    licenzija.Suspend();
+                    Console.WriteLine("Licencija sustabdyta.");
+                }
+                else
+                {
+                    Console.WriteLine("Licencija jau sustabdyta.");
+                }
+            }
+            else if (input == "3") // jeigu nori aktyvuoti licenziją
+            {
+                if (!licenzija.IsActive)
+                {
+                    licenzija.Activate();
+                    Console.WriteLine("Licencija aktyvuota. Atsisiuntimų skaitiklis nepakeistas.");
+                }
+                else
+                {
+                    Console.WriteLine("Licencija jau aktyvi.");
+                }
+            }
+            else if (input == "4") // jeigu nori atstatyti atsisiuntimų skaičių
+            {
+                licenzija.ResetDownloads();
+                Console.WriteLine("Skaitiklis atstatytas. Licencijos aktyvumas nepakeistas.");
             }
             else
             {
-                Console.WriteLine("Atsisiuntimas neleidžiamas: licencija sustabdyta arba pasiektas limitas.");
-            }
-
-            Console.WriteLine($"Liko atsisiuntimų: {remainingDownloads}");
-
-            if(remainingDownloads == 0)
-            {
-                Console.WriteLine("\nAr norėtumėte atstatyti (reset) atsisiuntimų kiekį?\nĮveskite true ar false:");
-                string? inputReset = Console.ReadLine();
-
-                if(inputReset is null)
-                {
-                    break;
-                }
-                if(!(bool.TryParse(inputReset, out bool wantsReset)))
-                {
-                    Console.WriteLine("Netinkama įvestis. Rašykite true arba false");
-                    continue;
-                }
-                if (!wantsReset)
-                {
-                    break;
-                }
-
-                licenzija.ResetDownloads();
-                Console.WriteLine($"Jūsų atsisiuntimų kiekis atstatytas. Jums liko {licenzija.DownloadLimit - licenzija.DownloadCount} atsisiuntimai");
+                Console.WriteLine("Netinkamas pasirinkimas. Įveskite 0, 1, 2, 3 arba 4.");
             }
         }
     }
