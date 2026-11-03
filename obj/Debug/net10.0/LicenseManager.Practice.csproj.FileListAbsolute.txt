@@ -12,3 +12,4 @@ C:\Users\povil\Desktop\LicenseManager.Practice\obj\Debug\net10.0\refint\LicenseM
 C:\Users\povil\Desktop\LicenseManager.Practice\obj\Debug\net10.0\LicenseManager.Practice.pdb
 C:\Users\povil\Desktop\LicenseManager.Practice\obj\Debug\net10.0\LicenseManager.Practice.genruntimeconfig.cache
 C:\Users\povil\Desktop\LicenseManager.Practice\obj\Debug\net10.0\ref\LicenseManager.Practice.dll
+C:\Users\povil\Desktop\LicenseManager.Practice\obj\Debug\net10.0\LicenseManager.Practice.sourcelink.json
