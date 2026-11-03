@@ -21,6 +21,7 @@ class Program
             Console.WriteLine("2 - Sustabdyti licenciją");
             Console.WriteLine("3 - Aktyvuoti licenciją");
             Console.WriteLine("4 - Atstatyti atsisiuntimų skaičių");
+            Console.WriteLine("5 - Pakeisti atsisiuntimų limito skaičių");
             Console.WriteLine("0 - Baigti");
             Console.Write("Pasirinkite veiksmą: ");
 
@@ -84,9 +85,42 @@ class Program
                 licencija.ResetDownloads();
                 Console.WriteLine("Atsisiuntimų skaitiklis atstatytas. Licencijos aktyvumas nepakeistas.");
             }
+            else if (input == "5")
+            {
+                while (true)
+                {
+                    Console.WriteLine("Įveskite naują atsisiuntimų limitą:");
+
+                    string? limitNumber = Console.ReadLine();
+
+                    if (limitNumber is null)
+                    {
+                        return;
+                    }
+
+                    if (!int.TryParse(limitNumber, out int number))
+                    {
+                        Console.WriteLine("Įveskite sveikąjį skaičių.");
+                        continue;
+                    }
+
+                    if (number < 0)
+                    {
+                        Console.WriteLine("Limitas negali būti neigiamas.");
+                        continue;
+                    }
+
+                    licencija.ChangeDownloadLimit(number);
+
+                    Console.WriteLine(
+                        $"Naujas atsisiuntimų limitas: {licencija.DownloadLimit}");
+
+                    break;
+                }
+            }
             else
             {
-                Console.WriteLine("Netinkamas pasirinkimas. Įveskite 0, 1, 2, 3 arba 4.");
+                Console.WriteLine("Netinkamas pasirinkimas. Įveskite 0, 1, 2, 3, 4 arba 5.");
             }
         }
     }
