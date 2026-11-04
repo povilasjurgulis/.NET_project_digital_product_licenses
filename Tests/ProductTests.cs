@@ -13,4 +13,23 @@ public class ProductTests
         Assert.Equal("DistortedFX", produktas.Name);
         Assert.Equal(76.99m, produktas.Price);
     }
+
+    // Produktas gali būti nemokamas
+    [Fact]
+    public void Product_CanBeFree()
+    {
+        Product produktas = new Product(3, "FreeFX", 0m);
+
+        Assert.Equal(0m, produktas.Price);
+    }
+
+    // Produkto ID turi būti teigiamas
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ProductID_MustBePositive(int newProductId)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new Product(newProductId, "Shake Presets", 47m));
+    }
 }
