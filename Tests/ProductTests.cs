@@ -32,4 +32,27 @@ public class ProductTests
         Assert.Throws<ArgumentOutOfRangeException>(
             () => new Product(newProductId, "Shake Presets", 47m));
     }
+
+    // Netinka nei null, nei tuščias tekstas, nei vien tarpai
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\n")]
+    public void Name_CannotBe_Null_Or_WhiteSpace(string? newName) // ? reiškia, kad gali būti null reikšmė
+    {
+        Assert.Throws<ArgumentException>(
+            () => new Product(4, newName!, 47m)); // ! yra null forgiving operator (neperspėja kompiliatoriaus apie null)
+    }
+
+    // Neigiama kaina neleidžiama
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-11550880)]
+    public void NegativePrice_NotAllowed(int newPrice)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new Product(7, "ShakeFX", newPrice));
+    }
 }
