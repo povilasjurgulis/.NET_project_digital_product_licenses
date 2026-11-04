@@ -5,6 +5,7 @@ public class License
     // Fields
     public int ProductId { get; private set; }
     public int LicenseId { get; private set; }
+    public string LicenseKey {get; private set; }
     public int DownloadLimit { get; private set; }
     public int DownloadCount { get; private set; }
     public bool IsActive { get; private set; }
@@ -30,6 +31,7 @@ public class License
 
         ProductId = newProductId;
         LicenseId = newLicenseId;
+        LicenseKey = Guid.NewGuid().ToString("N"); // sugeneruoja UUID, o ToString("N") pateikia jį kaip 32 šešioliktainius simbolius be brūkšnelių
         DownloadLimit = newDownloadLimit;
         DownloadCount = 0;
         IsActive = newIsActive;

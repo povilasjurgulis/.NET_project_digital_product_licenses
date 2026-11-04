@@ -311,4 +311,31 @@ public class LicenseTests
         Assert.Equal(1, licencija.DownloadCount);
         Assert.True(licencija.IsActive);
     }
+
+    // Sukurtos licencijos raktas nėra tuščias.
+    [Fact]
+    public void LicenceKey_NotNullOrWhiteSpace()
+    {
+        License licencija = new License(1, 15, 3, true);
+        Assert.False(string.IsNullOrWhiteSpace(licencija.LicenseKey));
+    }
+
+    // Atlikus sustabdymą, aktyvavimą, atstatymą ir limito pakeitimą, raktas lieka toks pats.
+    [Fact]
+    public void ChangingEverythingElse_DoesNotChangeLicenseKey()
+    {
+        License licencija = new License(1, 15, 3, true);
+        string licenseKeyCopy = licencija.LicenseKey;
+
+        licencija.Suspend();
+        licencija.Activate();
+        for(int i = 0; i < 3; i++)
+        {
+            bool download = licencija.TryUseDownload();
+        }
+        licencija.ResetDownloads();
+        licencija.ChangeDownloadLimit(7);
+
+        Assert.Equal(licenseKeyCopy, licencija.LicenseKey);
+    }
 }

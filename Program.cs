@@ -16,7 +16,8 @@ class Program
 
             Console.WriteLine($"\nLicencija aktyvi: {licencija.IsActive}");
             Console.WriteLine($"Panaudota atsisiuntimų: {licencija.DownloadCount} iš {licencija.DownloadLimit}. " + $"Liko: {remainingDownloads}.");
-
+            Console.WriteLine($"Licencijos raktas yra {licencija.LicenseKey}");
+            
             Console.WriteLine("1 - Bandyti atsisiųsti");
             Console.WriteLine("2 - Sustabdyti licenciją");
             Console.WriteLine("3 - Aktyvuoti licenciją");
