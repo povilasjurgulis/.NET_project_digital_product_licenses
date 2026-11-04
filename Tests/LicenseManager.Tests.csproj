@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LicenseManager.Practice.csproj" />
+    <ProjectReference Include="..\LicenseManager.Core\LicenseManager.Core.csproj" />
   </ItemGroup>
 
 </Project>

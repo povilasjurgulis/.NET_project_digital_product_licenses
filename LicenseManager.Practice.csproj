@@ -8,5 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Tests/**/*.cs" />
+    <Compile Remove="LicenseManager.Core/**/*.cs" />
+    <Compile Remove="LicenseManager.Web/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="LicenseManager.Core\LicenseManager.Core.csproj" />
   </ItemGroup>
 </Project>

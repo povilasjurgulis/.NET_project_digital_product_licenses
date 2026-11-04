@@ -1,0 +1,30 @@
+@model System.Collections.Generic.List<Product>
+
+@{
+    ViewData["Title"] = "Produktai";
+}
+
+<h1>Skaitmeniniai produktai</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Pavadinimas</th>
+            <th>Kaina, EUR</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>@product.Price.ToString("0.00")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>Produktų skaičius: @Model.Count</p>
