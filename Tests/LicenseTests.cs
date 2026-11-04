@@ -328,14 +328,21 @@ public class LicenseTests
         string licenseKeyCopy = licencija.LicenseKey;
 
         licencija.Suspend();
-        licencija.Activate();
-        for(int i = 0; i < 3; i++)
-        {
-            bool download = licencija.TryUseDownload();
-        }
-        licencija.ResetDownloads();
-        licencija.ChangeDownloadLimit(7);
+        Assert.Equal(licenseKeyCopy, licencija.LicenseKey);
 
+        licencija.Activate();
+        Assert.Equal(licenseKeyCopy, licencija.LicenseKey);
+
+        for (int i = 0; i < 3; i++)
+        {
+            Assert.True(licencija.TryUseDownload());
+            Assert.Equal(licenseKeyCopy, licencija.LicenseKey);
+        }
+
+        licencija.ResetDownloads();
+        Assert.Equal(licenseKeyCopy, licencija.LicenseKey);
+
+        licencija.ChangeDownloadLimit(7);
         Assert.Equal(licenseKeyCopy, licencija.LicenseKey);
     }
 }
