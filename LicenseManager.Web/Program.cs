@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,19 @@ string databasePath = Path.Combine(
 // Užregistruojamas AppDbContext, kad jį būtų galima naudoti kitose klasėse (pvz., Controller).
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={databasePath}")); // Nurodoma, kad bus naudojama SQLite DB.
+
+// Konfigūruojame naudotojų registraciją, prisijungimą ir roles: 
+builder.Services
+    .AddDefaultIdentity<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false; // Leidžia prisijungti nepatvirtinus paskyros su email
+        options.User.RequireUniqueEmail = true; // Kiekvienas naudotojas turi turėti unikalų email
+        options.Password.RequiredLength = 8; // Minimalus slaptažodžio ilgis - 8 simboliai
+    })
+    .AddRoles<IdentityRole>() // Prideda rolių valdymą
+    .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -31,7 +45,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthentication(); // Nustato, kas yra prisijungęs
+app.UseAuthorization(); // Tikrina, kokius veiksmus gali atlikti
 
 app.MapStaticAssets();
 
@@ -40,5 +55,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Užregistruojami Razor Pages maršrutai (pvz. prisijungimui ir registracijai):
+app.MapRazorPages();
 
 app.Run();
