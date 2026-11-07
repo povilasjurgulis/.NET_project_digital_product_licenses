@@ -6,7 +6,6 @@ public class Product
     public string Name{ get; set; }
     public decimal Price{ get; set; }
 
-    
     public Product( int newId, string newName, decimal newPrice)
     {
         if(newId <= 0)
@@ -27,5 +26,10 @@ public class Product
         Id = newId;
         Name =newName;
         Price = newPrice;
+    }
+
+    private Product() // šis konstruktorius leidžia EF Core sukurti objektą skaitant duomenis ir užpildyti jo savybes iš duomenų bazės
+    {
+        Name = string.Empty;
     }
 }

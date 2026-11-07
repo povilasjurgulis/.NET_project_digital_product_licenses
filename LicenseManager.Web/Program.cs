@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Sukuriame kelią iki duomenų bazės failo (SQLite duomenų bazės failas licensemanager.db).
+string databasePath = Path.Combine(
+    builder.Environment.ContentRootPath,
+    "licenseManager.db"
+);
+
+// Užregistruojamas AppDbContext, kad jį būtų galima naudoti kitose klasėse (pvz., Controller).
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite($"Data Source={databasePath}")); // Nurodoma, kad bus naudojama SQLite DB.
 
 var app = builder.Build();
 
@@ -9,7 +21,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
     app.UseHsts();
 }
 
