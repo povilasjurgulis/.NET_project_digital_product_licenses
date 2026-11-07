@@ -32,4 +32,20 @@ public class Product
     {
         Name = string.Empty;
     }
+
+    public Product(string newName, decimal newPrice) // konstruktorius produktui be ID
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            throw new ArgumentException("Produkto pavadinimas negali būti tuščias!", nameof(newName));
+        }
+
+        if(newPrice < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(newPrice), "Produkto kaina negali būti neigiama!");
+        }
+        
+        Name =newName;
+        Price = newPrice;
+    }
 }

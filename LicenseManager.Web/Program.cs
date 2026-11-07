@@ -17,6 +17,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
+app.UseRequestLocalization("lt-LT"); // Nustato lietuvišką skaičių formatą
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

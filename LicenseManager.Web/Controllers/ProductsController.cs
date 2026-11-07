@@ -23,4 +23,32 @@ public class ProductsController : Controller
 
         return View(products); // Produktų sąrašas perduodamas į View.
     }
+
+    // Atidarome formą:
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View(new CreateProductViewModel());
+    }
+
+    // Priimame formos duomenis:
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateProductViewModel model)
+    {
+        if (!ModelState.IsValid || model.Price is null)
+        {
+            return View(model);
+        }
+
+        // Iš įvestų duomenų sukuriamas Product objektas
+        Product product = new Product(
+            model.Name.Trim(),
+            model.Price.Value);
+
+        _context.Products.Add(product); // Paruošiamas įrašymas
+        await _context.SaveChangesAsync(); // Išsaugomas produktas SQLite duomenų bazėje
+
+        return RedirectToAction(nameof(Index)); // Naudotojas nukreipiamas į produktų sąrašą
+    }
 }

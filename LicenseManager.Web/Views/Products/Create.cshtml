@@ -1,0 +1,52 @@
+@*Produkto pridėjimo formos kūrimas.*@
+
+@model CreateProductViewModel
+
+@{
+    ViewData["Title"] = "Pridėti produktą";
+}
+
+<h1>Pridėti produktą</h1>
+
+@*Forma siunčia duomenis POST metodu į Create veiksmą. Naudojamas CSRF apsaugos tokenas.*@
+<form asp-action="Create" method="post" asp-antiforgery="true">
+
+    @*Parodomos visos modelio validacijos klaidos.*@
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    @*Produkto pavadinimo įvesties laukas ir jo klaidos.*@
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+
+        <input asp-for="Name" class="form-control" />
+
+        <span asp-validation-for="Name"
+              class="text-danger"></span>
+    </div>
+
+    @*Produkto kainos įvesties laukas ir jo klaidos.*@
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+
+        <input asp-for="Price"
+               type="text"
+               inputmode="decimal"
+               class="form-control" />
+
+        <div class="form-text">
+            Pavyzdžiui: 47,99
+        </div>
+
+        <span asp-validation-for="Price"
+              class="text-danger"></span>
+    </div>
+
+    @*Formos pateikimas arba grįžimas į produktų sąrašą.*@
+    <button type="submit" class="btn btn-primary">
+        Išsaugoti
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Grįžti į sąrašą
+    </a>
+</form>
