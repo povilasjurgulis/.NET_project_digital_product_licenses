@@ -1,17 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-// ProductsController apdoroja užklausas, susijusias su produktų puslapiu
-public class ProductsController : Controller // ProductsController paveldi funkcionalumą iš ASP.NET Core Controller klasės
+
+// Klasės paskirtis – nuskaityti produktus iš SQLite duomenų bazės, surikiuoti juos pagal ID ir perduoti internetiniam puslapiui (View).
+public class ProductsController : Controller
 {
-    public IActionResult Index() // IActionResult - metodas, kuris grąžina ASP.NET Core veiksmo rezultatą
+    private readonly AppDbContext _context; // klasės laukas, kur saugoma nuoroda į mano db kontekstą.
+
+    // Per Dependency Injection gaunamas AppDbContext:
+    public ProductsController(AppDbContext context) // ASP.NET Core pateikia kontekstą valdikliui.
     {
-        List<Product> products = new List<Product>
-        {
-            new Product(1, "Shake Presets", 47m),
-            new Product(2, "Viral Transitions", 57m),
-            new Product(3, "Impact Presets", 57m)
-        };
-        
-        return View(products); // Paruošia rezultatą, kuriame nurodomas atvaizduotinas View ir jam perduoda products sąrašą
+        _context = context;
+    }
+
+     // Asinchroniškai gaunami produktai iš duomenų bazės:
+    public async Task<IActionResult> Index()
+    {
+        List<Product> products = await _context.Products
+            .AsNoTracking() // Nesekami objektų pakeitimai
+            .OrderBy(product => product.Id) // Rikiavimas pagal ID didėjimo tvarka
+            .ToListAsync(); // Užklausa įvykdoma, rezultatai sudedami į sąrašą
+
+        return View(products); // Produktų sąrašas perduodamas į View.
     }
 }
