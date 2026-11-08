@@ -1,31 +1,35 @@
-using System.Net.ServerSentEvents;
-using System.Text;
+using System;
+using System.Collections.Generic;
 
 public class Order
 {
-    public int OrderId { get; private set;}
-    public string ClientId {get; private set;}
-    public DateTime OrderCreationDate {get; private set;}
-    public OrderPaymentStatus PaymentStatus {get; private set;}
-    public List <OrderItem> Items {get; } = new();
+    private readonly List<OrderItem> _items = new();
 
-    public Order(int newOrderId, string newClientId){
-        if(newOrderId < 0)
+    public int OrderId { get; private set; }
+    public string ClientId { get; private set; }
+    public DateTime OrderCreationDate { get; private set; }
+    public OrderPaymentStatus PaymentStatus { get; private set; }
+
+    // Sąrašą galima peržiūrėti, o eilutes prideda AddItem().
+    public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
+
+    public Order(string newClientId)
+    {
+        if (string.IsNullOrWhiteSpace(newClientId))
         {
-            throw new ArgumentOutOfRangeException(nameof(newOrderId), "Užsakymo Id negali būti neigiamas!");
-        }
-        
-        if(string.IsNullOrWhiteSpace(newClientId))
-        {
-            throw new ArgumentException("Produkto pavadinimas negali būti tuščias!", nameof(newClientId));
+            throw new ArgumentException(
+                "Kliento paskyros ID negali būti tuščias.",
+                nameof(newClientId));
         }
 
-        OrderId = newOrderId;
         ClientId = newClientId;
         OrderCreationDate = DateTime.UtcNow;
         PaymentStatus = OrderPaymentStatus.Pending;
+
+        // OrderId suteiks duomenų bazė.
     }
 
+    // EF Core naudos šį konstruktorių duomenims nuskaityti.
     private Order()
     {
         ClientId = string.Empty;
@@ -33,30 +37,47 @@ public class Order
 
     public void AddItem(OrderItem item)
     {
-        if(item.OrderItemId.ToString() == null)
+        if (item is null)
         {
-            throw new ArgumentException("Užsakymo produkto ID negali būti tuščias!", nameof(AddItem));
+            throw new ArgumentNullException(nameof(item));
         }
 
-        while(PaymentStatus == OrderPaymentStatus.Pending)
+        EnsurePending();
+
+        if (_items.Contains(item))
         {
-            Items.Append(item);
+            throw new InvalidOperationException(
+                "Ši užsakymo eilutė jau pridėta.");
         }
+
+        _items.Add(item);
     }
 
     public void MarkAsPaid()
     {
-        if(PaymentStatus == OrderPaymentStatus.Pending && Items.Count > 0)
+        EnsurePending();
+
+        if (_items.Count == 0)
         {
-            PaymentStatus = OrderPaymentStatus.Paid;
+            throw new InvalidOperationException(
+                "Tuščio užsakymo negalima pažymėti apmokėtu.");
         }
+
+        PaymentStatus = OrderPaymentStatus.Paid;
     }
 
     public void Cancel()
     {
-        if(PaymentStatus == OrderPaymentStatus.Pending)
+        EnsurePending();
+        PaymentStatus = OrderPaymentStatus.Cancelled;
+    }
+
+    private void EnsurePending()
+    {
+        if (PaymentStatus != OrderPaymentStatus.Pending)
         {
-            PaymentStatus = OrderPaymentStatus.Cancelled;
+            throw new InvalidOperationException(
+                "Šis veiksmas leidžiamas tik apmokėjimo laukiančiam užsakymui.");
         }
     }
 }

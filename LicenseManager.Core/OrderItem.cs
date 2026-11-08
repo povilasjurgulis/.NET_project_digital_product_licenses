@@ -1,33 +1,35 @@
+using System;
+
 public class OrderItem
 {
-    public int OrderItemId {get; private set;}
-    public decimal PriceAtTheTime {get; private set;}
-    public int ProductId {get; private set;}
-    public int OrderId {get; private set;}
+    public int OrderItemId { get; private set; }
+    public decimal PriceAtTheTime { get; private set; }
+    public int ProductId { get; private set; }
+    public int OrderId { get; private set; }
 
-    public OrderItem(int newOrderItemId, decimal newPriceAtTheTime, int newProductId, int newOrderId)
+    public OrderItem(int newProductId, decimal newPriceAtTheTime)
     {
-        if(newOrderItemId < 0)
+        if(newProductId <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(newOrderItemId), "Užsakymo produkto Id negali būti neigiamas!");
+            throw new ArgumentOutOfRangeException(
+                nameof(newProductId),
+                "Produkto ID turi būti didesnis už nulį.");
         }
 
         if(newPriceAtTheTime < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(newPriceAtTheTime), "Kaina negali būti neigiama!");
+            throw new ArgumentOutOfRangeException(
+                nameof(newPriceAtTheTime),
+                "Kaina negali būti neigiama.");
         }
 
-        if(newProductId < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(newProductId), "Produkto Id negali būti neigiamas!");
-        }
-
-
-        OrderItemId = newOrderItemId;
-        PriceAtTheTime = newPriceAtTheTime;
         ProductId = newProductId;
+        PriceAtTheTime = newPriceAtTheTime;
+
+        // OrderItemId suteiks duomenų bazė.
     }
 
+    // EF Core naudos šį konstruktorių duomenims nuskaityti.
     private OrderItem()
     {
     }
