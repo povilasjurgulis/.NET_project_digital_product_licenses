@@ -10,6 +10,9 @@ public class License
     public int DownloadCount { get; private set; }
     public bool IsActive { get; private set; }
 
+    public int OrderItemId { get; private set; } // Rodo, už kurią užsakymo eilutę licencija išduota
+
+    public OrderItem OrderItem { get; private set; } = null!;
 
     // Konstruktorius:
     public License(int newProductId, int newLicenseId, int newDownloadLimit, bool newIsActive)
@@ -35,6 +38,41 @@ public class License
         DownloadLimit = newDownloadLimit;
         DownloadCount = 0;
         IsActive = newIsActive;
+    }
+
+    // Šis konstruktorius naudojamas naujai licencijai sukurti ir automatiškai nustatyti visas jos pradines reikšmes:
+    public License(OrderItem newOrderItem, int newDownloadLimit)
+    {
+        if (newOrderItem is null)
+        {
+            throw new ArgumentNullException(nameof(newOrderItem));
+        }
+
+        if (newDownloadLimit < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(newDownloadLimit),
+                "Atsisiuntimų limitas negali būti neigiamas.");
+        }
+
+        OrderItem = newOrderItem;
+        OrderItemId = newOrderItem.OrderItemId;
+
+        ProductId = newOrderItem.ProductId;
+
+        DownloadLimit = newDownloadLimit;
+        DownloadCount = 0;
+        IsActive = true;
+        
+        LicenseKey = Guid.NewGuid().ToString("N"); // Sugeneruojame unikalų license key
+
+        // License ID suteiks duomenų bazė
+    }
+
+    // Šis konstruktorius reikalingas EF Core, kad jis galėtų sukurti License objektą skaitydamas licenciją iš SQLite db
+    private License()
+    {
+        LicenseKey = string.Empty;
     }
 
 
