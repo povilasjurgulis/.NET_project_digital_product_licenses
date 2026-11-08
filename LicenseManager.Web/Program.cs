@@ -58,4 +58,28 @@ app.MapControllerRoute(
 // Užregistruojami Razor Pages maršrutai (pvz. prisijungimui ir registracijai):
 app.MapRazorPages();
 
+// Šis kodas leidžia per terminalo argumentą --assign-admin priskirti administratoriaus teises:
+if (args.Contains("--assign-admin")) // Patikrinamas paleidimo argumentas
+{
+    if (!app.Environment.IsDevelopment()) // Patikrinama programos aplinka
+    {
+        throw new InvalidOperationException(
+            "Ši komanda skirta Development aplinkai.");
+    }
+
+    string? adminEmail = app.Configuration["AdminSetup:Email"]; // Gaunamas admin email
+
+    if (string.IsNullOrWhiteSpace(adminEmail)) // Patikrinama, ar email nurodytas
+    {
+        throw new InvalidOperationException(
+            "Nenurodytas AdminSetup:Email nustatymas.");
+    }
+
+    await AdminSetup.AssignAsync(app.Services, adminEmail); // Priskiriame admin rolė
+
+    Console.WriteLine("Administratoriaus teisės priskirtos.");
+
+    return;
+}
+
 app.Run();

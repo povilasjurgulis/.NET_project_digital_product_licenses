@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
 
 // Klasės paskirtis – nuskaityti produktus iš SQLite duomenų bazės, surikiuoti juos pagal ID ir perduoti internetiniam puslapiui (View).
 public class ProductsController : Controller
@@ -13,7 +13,7 @@ public class ProductsController : Controller
         _context = context;
     }
 
-     // Asinchroniškai gaunami produktai iš duomenų bazės:
+     // Asinchroniškai gaunami produktai iš duomenų bazės (produktų sąrašas viešai pasiekiamas):
     public async Task<IActionResult> Index()
     {
         List<Product> products = await _context.Products
@@ -26,6 +26,7 @@ public class ProductsController : Controller
 
     // Atidarome formą:
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         return View(new CreateProductViewModel());
@@ -33,6 +34,7 @@ public class ProductsController : Controller
 
     // Priimame formos duomenis:
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateProductViewModel model)
     {
